@@ -52,10 +52,17 @@ func (q *Queries) GetEntry(ctx context.Context, id int64) (Entry, error) {
 const listEntries = `-- name: ListEntries :many
 SELECT id, account_id, amount, created_at FROM entries
 ORDER BY id
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListEntries(ctx context.Context) ([]Entry, error) {
-	rows, err := q.db.QueryContext(ctx, listEntries)
+type ListEntriesParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error) {
+	rows, err := q.db.QueryContext(ctx, listEntries, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
