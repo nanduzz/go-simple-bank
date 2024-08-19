@@ -30,4 +30,9 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/nanduzz/simplebank/db/sqlc Store
 
-.PHONY: createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc server
+proto:
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+ 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+ 	proto/*.proto
+
+.PHONY: createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc server proto
